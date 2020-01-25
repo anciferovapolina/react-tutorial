@@ -2,9 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-let column;
-let row;
-
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick}>
@@ -53,7 +50,9 @@ class Game extends React.Component {
     this.state = {
       history: [
         {
-          squares: Array(9).fill(null)
+          squares: Array(9).fill(null),
+          column: 0,
+          row: 0
         }
       ],
       stepNumber: 0,
@@ -70,13 +69,13 @@ class Game extends React.Component {
       return;
     }
     squares[i] = this.state.xIsNext ? "X" : "O";
-    column = (i % 3) + 1;
-    row = Math.trunc(i / 3) + 1;
 
     this.setState({
       history: history.concat([
         {
-          squares: squares
+          squares: squares,
+          column: (i % 3) + 1,
+          row: Math.trunc(i / 3) + 1
         }
       ]),
       stepNumber: history.length,
@@ -95,18 +94,18 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
-    // console.log('history: ', history);
-    // console.log('current.squares: ', current.squares);
+    console.log('history: ', history);
+    console.log('current.squares: ', current.squares);
     const moves = history.map((step, move) => {
       const desc = move ?
-        'Go to move #' + move :
+        'Go to move #' + move + ' column: ' + step.column + ' row: ' + step.row :
         'Go to game start';
       console.log('step: ', step);
       console.log('move: ', move);
 
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc + ' column: ' + ' row: '}</button>
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>
         </li>
       );
     });
