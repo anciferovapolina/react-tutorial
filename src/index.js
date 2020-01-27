@@ -25,57 +25,30 @@ class Board extends React.Component {
   }
 
   generateSquares(size) {
-    let calc = 0;
-
     let boardRow = [];
-
-    let square;
     let squares = [];
 
-    const div = (i) => (
-      <div className="board-row" key={i}>
-        {squares}
-      </div>
-    );
-
-    for (let x = 0; x < size; x++) {
-      console.log('squares.length - 1: ', (squares.length - 1));
-      boardRow.push(div(x));
-
-      for (let y = 0; y < size / size; y++) {
-        square = this.renderSquare(x);
-        squares.push(square);
-      }
-
-      for (let z = 0; z < size; z++) {
-        calc++;
-        console.log('calc: ', calc);
-      }
+    for (let i = 0; i < size * size; i++) {
+      const square = this.renderSquare(i);
+      squares.push(square);
     }
 
-
+    for (let i = 0; i < size; i++) {
+      let arr = squares.slice(i * size, i * size + size);
+      const div = (
+        <div className="board-row" key={i}>
+          {arr}
+        </div>
+      );
+      boardRow.push(div);
+    }
     return boardRow;
   }
-
 
   render() {
     return (
       <div>
-        {/*<div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>*/}{this.generateSquares(3)}
+        {this.generateSquares(3)}
       </div>
     );
   }
