@@ -77,15 +77,15 @@ class List extends React.Component {
   }
 }
 
-class Sorting extends React.Component {
-/*  constructor(props) {
+/*class Sorting extends React.Component {
+/!*  constructor(props) {
     super(props);
     this.sorting = this.sorting.bind(this);
   }
 
   sorting(order) {
     this.props.onClick(order);
-  }*/
+  }*!/
 
   render() {
     return(
@@ -95,12 +95,12 @@ class Sorting extends React.Component {
       </div>
     )
   }
-}
+}*/
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    this.sorting = this.sorting.bind(this);
+    // this.sorting = this.sorting.bind(this);
 
     this.state = {
       history: [
@@ -148,21 +148,21 @@ class Game extends React.Component {
     });
   }
 
-  sorting(order) {
+/*  sorting(order) {
     const arr = this.state.moveList;
     arr.sort((a, b) => order === 'increasing' ? a.move - b.move : b.move - a.move);
     this.setState({
       moveList: arr,
     });
-  }
+  }*/
 
   generateList() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const arr = history.map((item, move) => ({move, item})); // move: 3, item: squares: (9) [null, null, "X", null, null, "O", null, null, "X"] column: 3 row: 3 index: 8
-    this.setState({
+/*    this.setState({
       moveList: arr,
-    });
+    });*/
     return arr.map((step) => {
       const desc = step.move ?
         'Go to move #' + step.move + ' column: ' + step.item.column + ' row: ' + step.item.row :
@@ -189,10 +189,11 @@ class Game extends React.Component {
     // console.log('current.squares: ', current.squares);
     // console.log('current: ', current);
 
-
     let status;
     if (winner) {
       status = "Winner: " + winner;
+    } else if (!winner && history.length === 10) {
+      status = 'The game is a draw!'
     } else {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
     }
@@ -208,7 +209,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <Sorting onClick={this.sorting}/>
+          {/*<Sorting onClick={this.sorting}/>*/}
           <ol>{this.generateList()}</ol>
         </div>
       </div>
