@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+let size = 3;
 class Square extends React.Component {
   render() {
     return (
@@ -48,7 +49,7 @@ class Board extends React.Component {
   render() {
     return (
       <div>
-        {this.generateSquares(3)}
+        {this.generateSquares(size)}
       </div>
     );
   }
@@ -131,8 +132,8 @@ class Game extends React.Component {
       history: history.concat([
         {
           squares: squares,
-          column: (i % 3) + 1,
-          row: Math.trunc(i / 3) + 1,
+          column: (i % size) + 1,
+          row: Math.trunc(i / size) + 1,
           index: i
         }
       ]),
@@ -192,7 +193,7 @@ class Game extends React.Component {
     let status;
     if (winner) {
       status = "Winner: " + winner;
-    } else if (!winner && history.length === 10) {
+    } else if (!winner && history.length === size * size + 1) {
       status = 'The game is a draw!'
     } else {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
