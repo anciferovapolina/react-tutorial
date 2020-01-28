@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 let size = 3;
+
 class Square extends React.Component {
   render() {
     return (
-      <button className={this.props.selected ? 'selected square' : 'square'} onClick={this.props.onClick}>
+      <button className={
+        this.props.selected ? 'selected square' :
+        this.props.isWinSquare ? 'win-squares square': 'square'}
+              onClick={this.props.onClick}>
         {this.props.value}
       </button>
     );
@@ -17,9 +21,10 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
+        isWinSquare={this.props.winSquares?.includes(i)}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
-        selected={this.props.index === i}
+        selected={this.props.index === i && !this.props.winSquares?.includes(i)}
         key={i}
       />
     );
@@ -68,7 +73,7 @@ class ListItem extends React.Component {
   }
 }
 
-class List extends React.Component {
+/*class List extends React.Component {
   render() {
     return (
       <ol>
@@ -76,7 +81,7 @@ class List extends React.Component {
       </ol>
     )
   }
-}
+}*/
 
 /*class Sorting extends React.Component {
 /!*  constructor(props) {
@@ -114,7 +119,7 @@ class Game extends React.Component {
       ],
       stepNumber: 0,
       xIsNext: true,
-      moveList: []
+      // moveList: []
     };
   }
 
@@ -149,21 +154,21 @@ class Game extends React.Component {
     });
   }
 
-/*  sorting(order) {
-    const arr = this.state.moveList;
-    arr.sort((a, b) => order === 'increasing' ? a.move - b.move : b.move - a.move);
-    this.setState({
-      moveList: arr,
-    });
-  }*/
+  /*  sorting(order) {
+      const arr = this.state.moveList;
+      arr.sort((a, b) => order === 'increasing' ? a.move - b.move : b.move - a.move);
+      this.setState({
+        moveList: arr,
+      });
+    }*/
 
   generateList() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const arr = history.map((item, move) => ({move, item})); // move: 3, item: squares: (9) [null, null, "X", null, null, "O", null, null, "X"] column: 3 row: 3 index: 8
-/*    this.setState({
-      moveList: arr,
-    });*/
+    /*    this.setState({
+          moveList: arr,
+        });*/
     return arr.map((step) => {
       const desc = step.move ?
         'Go to move #' + step.move + ' column: ' + step.item.column + ' row: ' + step.item.row :
@@ -184,7 +189,7 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const {winner, winSquares} = calculateWinner(current.squares) ? calculateWinner(current.squares) : {winner: null, winSquares: null};
 
     // console.log('history: ', history);
     // console.log('current.squares: ', current.squares);
@@ -206,6 +211,7 @@ class Game extends React.Component {
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
             index={current.index}
+            winSquares={winSquares}
           />
         </div>
         <div className="game-info">
@@ -236,7 +242,7 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {square: squares[a], winSquares: [a, b, c]};
     }
   }
   return null;

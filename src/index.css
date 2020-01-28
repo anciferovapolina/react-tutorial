@@ -50,5 +50,9 @@ ol, ul {
 }
 
 .selected {
-    background-color: #2fcb6b;
+    background-color: rgba(32, 129, 67, 0.47);
+}
+
+.win-squares {
+    background-color: #ff7f50;
 }
