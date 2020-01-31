@@ -132,7 +132,6 @@ class Game extends React.Component {
     this.setState({
       ascendingOrder: !this.state.ascendingOrder
     });
-    console.log(this.state.history);
   }
 
   jumpTo(step) {
