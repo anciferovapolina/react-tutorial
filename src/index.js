@@ -84,21 +84,6 @@ class List extends React.Component {
   }
 }
 
-class Sorting extends React.Component {
-  render() {
-    return (
-      <div>
-        <button onClick={() => this.props.onClick('increasing')}>
-          Increasing &uarr;
-        </button>
-        <button onClick={() => this.props.onClick('decreasing')}>
-          Decreasing &darr;
-        </button>
-      </div>
-    )
-  }
-}
-
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -115,6 +100,7 @@ class Game extends React.Component {
       ],
       stepNumber: 0,
       xIsNext: true,
+      ascendingOrder: true
     };
   }
 
@@ -122,7 +108,6 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
-    // console.log('squares: ', squares);
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
@@ -143,6 +128,13 @@ class Game extends React.Component {
     });
   }
 
+  toggleOrder() {
+    this.setState({
+      ascendingOrder: !this.state.ascendingOrder
+    });
+    console.log(this.state.history);
+  }
+
   jumpTo(step) {
     this.setState({
       stepNumber: step,
@@ -150,36 +142,23 @@ class Game extends React.Component {
     });
   }
 
-  sorting(order) {
-    const history = this.state.history;
-    history.sort((a, b) => {
-      if ((a.move > 0) && (b.move > 0)) {
-        return order === 'increasing' ? a.move - b.move : b.move - a.move
-      }
-      return;
-    });
-    console.log('history: ', history);
-    this.setState({history});
-  }
-
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    // const arr = history.map((item, move) => ({move, item})); // move: 3, item: squares: (9) [null, null, "X", null, null, "O", null, null, "X"] column: 3 row: 3 index: 8
-    const {winner, winSquares} = calculateWinner(current.squares) ?
+    const {square: winner, winSquares} = calculateWinner(current.squares) ?
       calculateWinner(current.squares) :
       {
         winner: null,
         winSquares: null
       };
 
-    const moves = history.map((item) => {
-      const desc = item.move ?
-        'Go to move #' + item.move + ' column: ' + item.column
+    const moves = history.map((item, index) => {
+      const desc = index ?
+        'Go to move #' + index + ' column: ' + item.column
         + ' row: ' + item.row : 'Go to game start';
 
       return (
-        <ListItem key={desc}
+        <ListItem key={item.move}
                   desc={desc}
                   onClick={(event) => this.jumpTo(item.move, event)}
                   historyIndex={history[item.move].index}
@@ -202,6 +181,10 @@ class Game extends React.Component {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
     }
 
+    if (!this.state.ascendingOrder) {
+      moves.sort((a, b) => b.props.move - a.props.move);
+    }
+
     return (
       <div className="game">
         <div className="game-board">
@@ -214,7 +197,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <Sorting onClick={(order) => this.sorting(order)}/>
+          <button onClick={() => this.toggleOrder()}>Change order</button>
           <List>{moves}</List>
         </div>
       </div>
