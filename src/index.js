@@ -30,7 +30,7 @@ class Board extends React.Component {
     );
   }
 
-  generateSquares(size) {
+  render() {
     let boardRow = [];
     let squares = [];
 
@@ -48,13 +48,10 @@ class Board extends React.Component {
       );
       boardRow.push(div);
     }
-    return boardRow;
-  }
 
-  render() {
     return (
       <div>
-        {this.generateSquares(size)}
+        {boardRow}
       </div>
     );
   }
