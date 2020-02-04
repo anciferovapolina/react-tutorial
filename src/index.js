@@ -1,8 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { createStore } from 'redux';
+import { connect, Provider } from 'react-redux';
+import rootReducer from './redux/reducers';
+import { changeOrderAction, makeMoveAction } from './redux/actions'
 
 let size = 3;
+const store = createStore(
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 class Square extends React.Component {
   render() {
@@ -108,7 +116,7 @@ class Game extends React.Component {
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
-    squares[i] = this.state.xIsNext ? "X" : "O";
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
 
     this.setState({
       history: history.concat([
@@ -126,6 +134,7 @@ class Game extends React.Component {
   }
 
   toggleOrder() {
+    this.props.changeOrderAction(!this.state.ascendingOrder);
     this.setState({
       ascendingOrder: !this.state.ascendingOrder
     });
@@ -141,7 +150,7 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const {square: winner, winSquares} = calculateWinner(current.squares) ?
+    const { square: winner, winSquares } = calculateWinner(current.squares) ?
       calculateWinner(current.squares) :
       {
         winner: null,
@@ -170,11 +179,11 @@ class Game extends React.Component {
 
     let status;
     if (winner) {
-      status = "Winner: " + winner;
+      status = 'Winner: ' + winner;
     } else if (!winner && history.length === size * size + 1) {
       status = 'The game is a draw!'
     } else {
-      status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
 
     if (!this.state.ascendingOrder) {
@@ -201,9 +210,22 @@ class Game extends React.Component {
   }
 }
 
+
+
+
+
+export default connect(
+  null,
+  {changeOrderAction}
+)(Game)
+
 // ========================================
 
-ReactDOM.render(<Game/>, document.getElementById("root"));
+ReactDOM.render(
+  <Provider store={store}>
+    <Game/>
+  </Provider>,
+  document.getElementById('root'));
 
 function calculateWinner(squares) {
   const lines = [
@@ -219,7 +241,7 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return {square: squares[a], winSquares: [a, b, c]};
+      return { square: squares[a], winSquares: [a, b, c] };
     }
   }
   return null;
