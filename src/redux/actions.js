@@ -1,22 +1,6 @@
-/*export const changeOrderAction = (order) => {
-  return {
-    type: 'CHANGE_ORDER',
-    payload: order
-  }
-};
-
-export const makeMoveAction = (payload) => {
-  return {
-    type: 'MAKE_MOVE',
-    payload
-  }
-};*/
-
-export const changeOrderAction = (isAscendingOrder) => ({
+export const changeOrderAction = (payload) => ({
   type: 'CHANGE_ORDER',
-  payload: {
-    ascendingOrder: isAscendingOrder,
-  }
+  payload
 });
 
 export const makeMoveAction = (payload) => ({

@@ -1,4 +1,4 @@
-const initialState = {
+export const preloadedState = {
   history: [
     {
       squares: Array(9).fill(null),
@@ -13,7 +13,7 @@ const initialState = {
   ascendingOrder: true
 };
 
-const gameReducer = (state = initialState, action) => {
+const gameReducer = (state = preloadedState, action) => {
   switch (action.type) {
     case 'CHANGE_ORDER':
       return {
@@ -28,7 +28,7 @@ const gameReducer = (state = initialState, action) => {
       };
 
     default:
-      return initialState;
+      return preloadedState;
   }
 };
 
