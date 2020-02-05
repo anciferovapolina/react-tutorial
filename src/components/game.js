@@ -6,7 +6,7 @@ import { Board } from './board';
 import { ListItem } from './list-item';
 import { size } from '../constants';
 
-class Game extends React.Component {
+export class Game extends React.Component {
   constructor(props) {
     super(props);
 
@@ -149,4 +149,4 @@ function calculateWinner(squares) {
   return null;
 }
 
-export default Game;
+export default ConnectedOrderState;
