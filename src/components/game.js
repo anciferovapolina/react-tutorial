@@ -18,16 +18,17 @@ export class Game extends React.Component {
 
     this.props.makeMoveAction(
       {
+        history: {
         squares: squares,
         column: (i % size) + 1,
         row: Math.trunc(i / size) + 1,
         index: i,
         id: history.length ? history.length : 0,
+      },
+        stepNumber: history.length,
+        xIsNext: !this.props.xIsNext,
       }
     );
-
-    this.props.stepNumberAction(history.length);
-    this.props.xIsNextAction(!this.props.xIsNext);
   }
 
   toggleOrder() {

@@ -24,7 +24,9 @@ const gameReducer = (state = preloadedState, action) => {
     case 'MAKE_MOVE':
       return {
         ...state,
-        history: [...state.history, action.payload],
+        history: [...state.history, action.payload.history],
+        stepNumber: action.payload.stepNumber,
+        xIsNext: action.payload.xIsNext,
       };
 
     case 'STEP_NUMBER':
