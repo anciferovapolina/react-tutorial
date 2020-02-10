@@ -1,72 +1,48 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { changeOrderAction } from '../redux/actions';
+import { changeOrderAction, makeMoveAction, stepNumberAction, xIsNextAction } from '../redux/actions';
 import { List } from './list';
 import { Board } from './board';
 import { ListItem } from './list-item';
 import { size } from '../constants';
 
 export class Game extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      history: [
-        {
-          squares: Array(9).fill(null),
-          column: 0,
-          row: 0,
-          index: null,
-          move: 0,
-        }
-      ],
-      stepNumber: 0,
-      xIsNext: true,
-      ascendingOrder: true
-    };
-  }
-
   handleClick(i) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    const history = this.props.history.slice(0, this.props.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    squares[i] = this.props.xIsNext ? 'X' : 'O';
 
-    this.setState({
-      history: history.concat([
-        {
-          squares: squares,
-          column: (i % size) + 1,
-          row: Math.trunc(i / size) + 1,
-          index: i,
-          move: history.length ? history.length : 0,
-        }
-      ]),
-      stepNumber: history.length,
-      xIsNext: !this.state.xIsNext,
-    });
+    this.props.makeMoveAction(
+      {
+        squares: squares,
+        column: (i % size) + 1,
+        row: Math.trunc(i / size) + 1,
+        index: i,
+        id: history.length ? history.length : 0,
+      }
+    );
+
+    this.props.stepNumberAction(history.length);
+    this.props.xIsNextAction(!this.props.xIsNext);
   }
 
   toggleOrder() {
-    this.setState({
-      ascendingOrder: !this.state.ascendingOrder
-    });
+    this.props.changeOrderAction(!this.props.ascendingOrder);
   }
 
   jumpTo(step) {
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0
-    });
+    this.props.stepNumberAction(step);
+    this.props.xIsNextAction((step % 2) === 0);
   }
 
   render() {
     console.log(this.props);
-    const history = this.state.history;
-    const current = history[this.state.stepNumber];
+    const history = this.props.history;
+    const current = history[this.props.stepNumber];
     const { square: winner, winSquares } = calculateWinner(current.squares) ?
       calculateWinner(current.squares) :
       {
@@ -80,12 +56,11 @@ export class Game extends React.Component {
         + ' row: ' + item.row : 'Go to game start';
 
       return (
-        <ListItem key={item.move}
+        <ListItem key={item.id}
                   desc={desc}
-                  onClick={(event) => this.jumpTo(item.move, event)}
-                  historyIndex={history[item.move].index}
+                  onClick={(event) => this.jumpTo(item.id, event)}
+                  historyIndex={history[item.id].index}
                   currentIndex={current.index}
-                  move={item.move}
         />
       );
     });
@@ -100,11 +75,11 @@ export class Game extends React.Component {
     } else if (!winner && history.length === size * size + 1) {
       status = 'The game is a draw!'
     } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      status = 'Next player: ' + (this.props.xIsNext ? 'X' : 'O');
     }
 
-    if (!this.state.ascendingOrder) {
-      moves.sort((a, b) => b.props.move - a.props.move);
+    if (!this.props.ascendingOrder) {
+      moves.sort((a, b) => b.props.id - a.props.id);
     }
 
     return (
@@ -127,8 +102,6 @@ export class Game extends React.Component {
   }
 }
 
-const ConnectedOrderState = connect((state => ({ascendingOrder: state.gameReducer.ascendingOrder})), { changeOrderAction })(Game);
-
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -149,4 +122,12 @@ function calculateWinner(squares) {
   return null;
 }
 
-export default ConnectedOrderState;
+const mapStateToProps = (state) => ({
+  ascendingOrder: state.gameReducer.ascendingOrder,
+  history: state.gameReducer.history,
+  stepNumber: state.gameReducer.stepNumber,
+  xIsNext: state.gameReducer.xIsNext,
+});
+const mapDispatchToProps = { changeOrderAction, makeMoveAction, stepNumberAction, xIsNextAction };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Game);

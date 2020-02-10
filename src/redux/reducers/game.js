@@ -5,7 +5,7 @@ export const preloadedState = {
       column: 0,
       row: 0,
       index: null,
-      move: 0,
+      id: 0,
     }
   ],
   stepNumber: 0,
@@ -24,7 +24,18 @@ const gameReducer = (state = preloadedState, action) => {
     case 'MAKE_MOVE':
       return {
         ...state,
-        moveList: { ...action.payload }
+        history: [...state.history, action.payload],
+      };
+
+    case 'STEP_NUMBER':
+      return {
+        ...state,
+        stepNumber: action.payload,
+      };
+    case 'X_IS_NEXT':
+      return {
+        ...state,
+        xIsNext: action.payload,
       };
 
     default:
