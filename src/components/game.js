@@ -17,18 +17,19 @@ export class Game extends React.Component {
     squares[i] = this.props.xIsNext ? 'X' : 'O';
 
     this.props.makeMoveAction(
-      {
-        history: {
-        squares: squares,
-        column: (i % size) + 1,
-        row: Math.trunc(i / size) + 1,
-        index: i,
-        id: history.length ? history.length : 0,
-      },
-        stepNumber: history.length,
-        xIsNext: !this.props.xIsNext,
-      }
+      history.concat([
+        {
+          squares: squares,
+          column: (i % size) + 1,
+          row: Math.trunc(i / size) + 1,
+          index: i,
+          id: history.length ? history.length : 0,
+        }
+      ])
     );
+
+    this.props.stepNumberAction(history.length);
+    this.props.xIsNextAction(!this.props.xIsNext);
   }
 
   toggleOrder() {
@@ -41,7 +42,6 @@ export class Game extends React.Component {
   }
 
   render() {
-    console.log(this.props);
     const history = this.props.history;
     const current = history[this.props.stepNumber];
     const { square: winner, winSquares } = calculateWinner(current.squares) ?
@@ -80,7 +80,7 @@ export class Game extends React.Component {
     }
 
     if (!this.props.ascendingOrder) {
-      moves.sort((a, b) => b.props.id - a.props.id);
+      moves.sort((a, b) => b.key - a.key);
     }
 
     return (
